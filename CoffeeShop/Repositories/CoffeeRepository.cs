@@ -62,5 +62,53 @@ namespace CoffeeShop.Repositories
                 }
             }
         }
+        public Coffee Get(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT 
+                                            c.Id AS cId, 
+                                            c.Title, 
+                                            c.BeanVarietyId, 
+                                            b.[Name], 
+                                            b.Region, 
+                                            b.Notes 
+                                        FROM Coffee c
+                                        JOIN BeanVariety b on b.Id = c.BeanVarietyId
+                                        WHERE c.Id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    var reader = cmd.ExecuteReader();
+                    Coffee coffee = null;
+                    if (reader.Read())
+                    {
+                        coffee = new Coffee()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("cId")),
+                            Title = reader.GetString(reader.GetOrdinal("Title")),
+                            BeanVarietyId = reader.GetInt32(reader.GetOrdinal("BeanVarietyId")),
+                            BeanVariety = new BeanVariety()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("BeanVarietyId")),
+                                Name = reader.GetString(reader.GetOrdinal("Name")),
+                                Region = reader.GetString(reader.GetOrdinal("Region")),
+                            }
+                        };
+                        if (!reader.IsDBNull(reader.GetOrdinal("Notes")))
+                        {
+                            coffee.BeanVariety.Notes = reader.GetString(reader.GetOrdinal("Notes"));
+                        }
+                        reader.Close();
+
+                        return coffee;
+                    }
+                    return null;
+
+                }
+            }
+        }
     }
 }
