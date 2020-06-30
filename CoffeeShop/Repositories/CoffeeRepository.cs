@@ -108,6 +108,56 @@ namespace CoffeeShop.Repositories
                     return null;
 
                 }
+            }            
+        }
+        public void AddCoffee(Coffee coffee)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        INSERT INTO Coffee (Title, BeanVarietyId)
+                        OUTPUT INSERTED.ID
+                        VALUES (@title, @beanId)";
+                    cmd.Parameters.AddWithValue("@title", coffee.Title);
+                    cmd.Parameters.AddWithValue("@beanId", coffee.BeanVarietyId);   
+                    coffee.Id = (int)cmd.ExecuteScalar();
+                }
+            }
+        }
+        public void UpdateCoffee(Coffee coffee)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        UPDATE Coffee 
+                           SET Title = @title, 
+                               BeanVarietyId = @beanId
+                         WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@id", coffee.Id);
+                    cmd.Parameters.AddWithValue("@title", coffee.Title);
+                    cmd.Parameters.AddWithValue("@beanId", coffee.BeanVarietyId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        public void DeleteCoffee(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM Coffee WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
     }

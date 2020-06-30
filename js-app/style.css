@@ -1,0 +1,20 @@
+#all-beans, #bean{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+#coffee{
+    flex-basis: 30%;
+    border: 1px solid rgb(185, 118, 55);
+    background-color: rgb(126, 86, 86);
+    color: ivory;
+    margin-bottom: 40px;
+}
+#bean-variety{
+    flex-basis: 30%;
+    border: 1px solid rgb(185, 145, 106);
+    background-color: rgb(154, 174, 212);
+    color: ivory;
+    margin-bottom: 40px;
+}
