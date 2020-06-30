@@ -1,9 +1,9 @@
 import { BeanVariety} from './beanVariety/BeanVariety.js' 
 import { Coffee} from './coffee/Coffee.js' 
-import { saveBean} from './beanVariety/AddBean.js'
+import {getCoffee, useCoffee, saveCoffee, DeleteCoffee} from './coffee/CoffeeProvider.js'
+import {getAllBeanVarieties} from './beanVariety/BeanVarietyList.js'
 
-const beanVarietyUrl = "https://localhost:5001/api/beanvariety/";
-const coffeeUrl = "https://localhost:5001/api/coffee/";
+const eventHub = document.querySelector("#main-container")
 
 const button = document.querySelector("#run-button");
 const beans = document.querySelector("#all--beans");
@@ -14,38 +14,41 @@ button.addEventListener("click", () => {
         .then(beanVarieties => {
             beans.innerHTML = beanVarieties.map(bean => BeanVariety(bean)).join("")
         })
-    getAllCoffee()
-        .then(allCoffee => {
+    getCoffee()
+        .then(() => {
+            const allCoffee = useCoffee()
             coffee.innerHTML = allCoffee.map(coffee => Coffee(coffee)).join("")
         })
 });
 
-const eventHub = document.querySelector("#main-container")
 
 // Handle browser-generated click event in component
 eventHub.addEventListener("click", clickEvent => {
-    if (clickEvent.target.id === "add--new_bean_variety") {
+    if (clickEvent.target.id === "add--new_coffee_variety") {
 
-        const name = document.querySelector("#name").value
-        const region = document.querySelector("#region").value
-        const notes = document.querySelector("#notes").value
+        const beanId = parseInt(document.querySelector("#beanvarietyId").value)
+        const title = document.querySelector("#title").value
 
         // Make a new object representation of a note
-        const newBeanVariety = {
-            name: name,
-            region: region,
-            notes: notes
+        const newCoffee = {
+            beanvarietyId: beanId,
+            title: title
         }
 
         // Change API state and application state
-        saveBean(newBeanVariety)
+        saveCoffee(newCoffee)
     }
 })
-const getAllBeanVarieties = () => {
-    return fetch(beanVarietyUrl).then(resp => resp.json());
-}
-const getAllCoffee = () => {
-    return fetch(coffeeUrl).then(resp => resp.json());
-}
+
+
+eventHub.addEventListener("click", clickEvent => {
+    if (clickEvent.target.id === "btn--delete-coffee") {
+
+        const coffeeId = parseInt(document.querySelector("#input--delete-coffee").value)
+        // Change API state and application state
+        DeleteCoffee(coffeeId)
+    }
+})
+
 
 

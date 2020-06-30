@@ -40,7 +40,7 @@ namespace CoffeeShop.Controllers
         [HttpPost]
         public IActionResult Post(Coffee coffee)
         {
-            //_coffeeRepository.AddCoffee(coffee);
+            _coffeeRepository.AddCoffee(coffee);
             return CreatedAtAction("Get", new { id = coffee.Id }, coffee);
         }
 
